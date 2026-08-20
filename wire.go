@@ -128,10 +128,28 @@ type Greeting struct {
 type Announcement struct {
 	Protocol *int    `json:"protocol"`
 	Socket   *string `json:"socket"`
+	// Token is what the greeting on that socket has to carry, and it travels here because the only
+	// process that reads this line is the one that started the process that printed it.
+	//
+	// The alternative is a file both sides derive a path to, and that is what a peer which did not
+	// start the process uses. A starter reading the file instead would be deriving something it was
+	// already told, and the two can part: a process that generated a token and had not yet written
+	// the file is a process whose file says something else.
+	//
+	// Absent means the socket takes an unauthenticated greeting. That is a statement, not a
+	// default: a process that wanted a token and forgot to announce one is refused at its own
+	// greeting rather than reached by anyone.
+	Token *string `json:"token,omitempty"`
 }
 
 // NewAnnouncement builds the line a process prints once its listener is bound and before it serves.
 func NewAnnouncement(socket string) Announcement {
 	protocol := Protocol
 	return Announcement{Protocol: &protocol, Socket: &socket}
+}
+
+// WithToken is the same announcement, naming the token a greeting must carry.
+func (announcement Announcement) WithToken(token string) Announcement {
+	announcement.Token = &token
+	return announcement
 }
