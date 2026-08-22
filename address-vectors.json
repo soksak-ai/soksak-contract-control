@@ -1,0 +1,14 @@
+[
+  {
+    "runtime": "C:\\runtime\\one",
+    "identifier": "com.soksak.test",
+    "windows": true,
+    "address": "\\\\.\\pipe\\soksak-control-4229a83a562f5343516fff52cd2c44bd"
+  },
+  {
+    "runtime": "/tmp/runtime",
+    "identifier": "com.soksak.test",
+    "windows": false,
+    "address": "/tmp/runtime/com.soksak.test.sock"
+  }
+]

@@ -1,10 +1,31 @@
 package controlwire
 
 import (
+	"encoding/json"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 )
+
+func TestAddressVectors(t *testing.T) {
+	body, err := os.ReadFile("address-vectors.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var vectors []struct {
+		Runtime, Identifier, Address string
+		Windows                      bool
+	}
+	if err := json.Unmarshal(body, &vectors); err != nil {
+		t.Fatal(err)
+	}
+	for _, vector := range vectors {
+		if got := Address(vector.Runtime, vector.Identifier, vector.Windows); got != vector.Address {
+			t.Errorf("Address(%q, %q, %t) = %q, want %q", vector.Runtime, vector.Identifier, vector.Windows, got, vector.Address)
+		}
+	}
+}
 
 func TestAddressUsesRuntimePathOnUnix(t *testing.T) {
 	got := Address(filepath.Join("tmp", "runtime"), "com.soksak.test", false)
