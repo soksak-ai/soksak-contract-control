@@ -1,7 +1,7 @@
 [package]
 name = "soksak-contract-control"
-version = "0.0.1"
-edition = "2021"
+version = "0.0.2"
+edition = "2024"
 publish = false
 license = "MIT"
 repository = "https://github.com/soksak-ai/soksak-contract-control"
