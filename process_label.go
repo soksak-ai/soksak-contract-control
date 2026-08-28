@@ -5,6 +5,9 @@ import "errors"
 import "regexp"
 
 const ProcessLabelEnvironment = "SOKSAK_PROCESS_LABEL"
+// SidecarNameEnvironment carries the installer-materialized process name. It is the sole source
+// for identity-scoped PTY endpoints; a daemon must not infer it from its executable path.
+const SidecarNameEnvironment = "SOKSAK_SIDECAR_NAME"
 const DefaultProcessLabel = "soksak"
 
 var ErrInvalidProcessLabel = errors.New("invalid process label")
