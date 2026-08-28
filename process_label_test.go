@@ -45,4 +45,8 @@ func TestProtocolTwoAnnouncementRequiresAProcessLabel(t *testing.T) {
 	if !found || field.Tag.Get("json") != "processLabel" {
 		t.Fatal("announcement does not carry the required processLabel")
 	}
+	announcement := NewAnnouncement("/runtime/sidecar.sock", "soksakv3")
+	if announcement.ProcessLabel == nil || *announcement.ProcessLabel != "soksakv3" {
+		t.Fatalf("announcement process label = %v", announcement.ProcessLabel)
+	}
 }

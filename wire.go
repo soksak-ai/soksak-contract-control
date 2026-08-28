@@ -17,7 +17,7 @@ import "encoding/json"
 // A client asking for a version the other side does not have is refused during the greeting rather
 // than at the first command that behaves differently: a mismatch found halfway through a session has
 // already produced answers the caller trusted.
-const Protocol = 1
+const Protocol = 2
 
 // HelloCommand is the greeting's name. It is reserved — anything that registered it would replace
 // the negotiation with something that answers differently.
@@ -104,6 +104,9 @@ type Greeting struct {
 	// Identity names the installation, so a client that found the wrong socket receives that at the
 	// greeting rather than through surprising answers.
 	Identity string `json:"identity"`
+	// ProcessLabel is the diagnostic name this process applied to the operating-system process
+	// surface. It never participates in identity, routing, permissions, or dependency resolution.
+	ProcessLabel string `json:"processLabel"`
 	// Commands is what is served and refused, with reasons. Sent in the greeting because a client
 	// that must ask separately will act on a name it has not checked.
 	Commands Table `json:"commands"`
@@ -128,6 +131,9 @@ type Greeting struct {
 type Announcement struct {
 	Protocol *int    `json:"protocol"`
 	Socket   *string `json:"socket"`
+	// ProcessLabel is required so a starter can prove that the process it launched applied the
+	// requested diagnostic label rather than merely inheriting an unused environment value.
+	ProcessLabel *string `json:"processLabel"`
 	// Token is what the greeting on that socket has to carry, and it travels here because the only
 	// process that reads this line is the one that started the process that printed it.
 	//
@@ -143,9 +149,9 @@ type Announcement struct {
 }
 
 // NewAnnouncement builds the line a process prints once its listener is bound and before it serves.
-func NewAnnouncement(socket string) Announcement {
+func NewAnnouncement(socket, processLabel string) Announcement {
 	protocol := Protocol
-	return Announcement{Protocol: &protocol, Socket: &socket}
+	return Announcement{Protocol: &protocol, Socket: &socket, ProcessLabel: &processLabel}
 }
 
 // WithToken is the same announcement, naming the token a greeting must carry.

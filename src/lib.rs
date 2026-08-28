@@ -1,10 +1,38 @@
 use sha2::{Digest, Sha256};
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 
+pub const PROTOCOL: u32 = 2;
 pub const PROCESS_LABEL_ENVIRONMENT: &str = "SOKSAK_PROCESS_LABEL";
 
-pub fn parse_process_label(_value: &str) -> Option<&str> {
-    None
+pub fn parse_process_label(value: &str) -> Option<&str> {
+    let bytes = value.as_bytes();
+    if bytes.is_empty() || bytes.len() > 64 || !bytes[0].is_ascii_alphanumeric() {
+        return None;
+    }
+    bytes[1..]
+        .iter()
+        .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+        .then_some(value)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Announcement {
+    pub protocol: u32,
+    pub socket: String,
+    pub process_label: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token: Option<String>,
+}
+
+pub fn announcement(socket: &str, process_label: &str, token: Option<&str>) -> Option<Announcement> {
+    Some(Announcement {
+        protocol: PROTOCOL,
+        socket: socket.to_owned(),
+        process_label: parse_process_label(process_label)?.to_owned(),
+        token: token.map(str::to_owned),
+    })
 }
 
 pub fn address(runtime_root: &Path, identifier: &str, windows: bool) -> String {
@@ -69,6 +97,15 @@ mod tests {
             let parsed = parse_process_label(&vector.input);
             assert_eq!(parsed, vector.valid.then_some(vector.input.as_str()), "{}", vector.input);
         }
+    }
+
+    #[test]
+    fn announcement_requires_and_carries_the_process_label() {
+        let value = announcement("/runtime/sidecar.sock", "soksakv3", Some("token")).unwrap();
+        assert_eq!(value.protocol, 2);
+        assert_eq!(value.process_label, "soksakv3");
+        let json = serde_json::to_value(value).unwrap();
+        assert_eq!(json["processLabel"], "soksakv3");
     }
 
     #[test]
