@@ -1,7 +1,7 @@
 [
   { "input": "soksak", "valid": true },
   { "input": "soksakv3", "valid": true },
-  { "input": "manual-v3_2.1", "valid": true },
+  { "input": "manual-v3_2", "valid": true },
   { "input": "A", "valid": true },
   { "input": "123456789012", "valid": true },
   { "input": "", "valid": false },

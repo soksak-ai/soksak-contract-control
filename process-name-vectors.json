@@ -1,0 +1,9 @@
+[
+  { "label": "soksakv3", "role": "pty", "name": "soksakv3-pty", "valid": true },
+  { "label": "soksakv3", "role": "terminal-alacritty", "name": "soksakv3-terminal-alacritty", "valid": true },
+  { "label": "123456789012", "role": "123456789012345678", "name": "123456789012-123456789012345678", "valid": true },
+  { "label": "1234567890123", "role": "pty", "name": "", "valid": false },
+  { "label": "soksakv3", "role": "1234567890123456789", "name": "", "valid": false },
+  { "label": "soksakv3", "role": "Terminal", "name": "", "valid": false },
+  { "label": "soksakv3", "role": "bad/role", "name": "", "valid": false }
+]

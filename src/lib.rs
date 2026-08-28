@@ -8,13 +8,28 @@ pub const DEFAULT_PROCESS_LABEL: &str = "soksak";
 
 pub fn parse_process_label(value: &str) -> Option<&str> {
     let bytes = value.as_bytes();
-    if bytes.is_empty() || bytes.len() > 31 || !bytes[0].is_ascii_alphanumeric() {
+    if bytes.is_empty() || bytes.len() > 12 || !bytes[0].is_ascii_alphanumeric() {
         return None;
     }
     bytes[1..]
         .iter()
         .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
         .then_some(value)
+}
+
+pub fn format_process_name(label: &str, role: &str) -> Option<String> {
+    let label = parse_process_label(label)?;
+    let bytes = role.as_bytes();
+    if bytes.is_empty()
+        || bytes.len() > 18
+        || !bytes[0].is_ascii_lowercase() && !bytes[0].is_ascii_digit()
+        || !bytes[1..]
+            .iter()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || *byte == b'-')
+    {
+        return None;
+    }
+    Some(format!("{label}-{role}"))
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -90,6 +105,14 @@ mod tests {
         valid: bool,
     }
 
+    #[derive(Deserialize)]
+    struct ProcessNameVector {
+        label: String,
+        role: String,
+        name: String,
+        valid: bool,
+    }
+
     #[test]
     fn process_label_vectors_are_the_rust_contract() {
         let vectors: Vec<ProcessLabelVector> =
@@ -97,6 +120,16 @@ mod tests {
         for vector in vectors {
             let parsed = parse_process_label(&vector.input);
             assert_eq!(parsed, vector.valid.then_some(vector.input.as_str()), "{}", vector.input);
+        }
+    }
+
+    #[test]
+    fn process_name_vectors_are_the_rust_contract() {
+        let vectors: Vec<ProcessNameVector> =
+            serde_json::from_str(include_str!("../process-name-vectors.json")).unwrap();
+        for vector in vectors {
+            let formatted = format_process_name(&vector.label, &vector.role);
+            assert_eq!(formatted.as_deref(), vector.valid.then_some(vector.name.as_str()));
         }
     }
 
