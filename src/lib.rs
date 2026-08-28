@@ -8,7 +8,7 @@ pub const DEFAULT_PROCESS_LABEL: &str = "soksak";
 
 pub fn parse_process_label(value: &str) -> Option<&str> {
     let bytes = value.as_bytes();
-    if bytes.is_empty() || bytes.len() > 64 || !bytes[0].is_ascii_alphanumeric() {
+    if bytes.is_empty() || bytes.len() > 31 || !bytes[0].is_ascii_alphanumeric() {
         return None;
     }
     bytes[1..]
