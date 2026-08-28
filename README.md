@@ -18,8 +18,16 @@ An absent launch value resolves once to the canonical label `soksak`.
 The label never identifies an installation, resolves a dependency, grants permission, selects a
 socket, or establishes ownership. It exists so public process inventory and monitoring UI can
 distinguish two otherwise identical runs. A process must announce the validated label it accepted;
-silently inheriting an unread environment value is not success. Operating-system process names are
-not this field: platforms that derive those names from executable or bundle identity remain unchanged.
+silently inheriting an unread environment value is not success.
+
+An operating-system process name is a platform projection of process metadata, not component
+identity. On macOS, the standard C library's `setprogname` changes the name returned by `proc_name`;
+changing `argv[0]`, an `NSProcessInfo` value, or a pthread name is not equivalent. The macOS
+projection is limited to 31 observable bytes and `setprogname` retains the supplied pointer for the
+process lifetime. Wails application and WebKit helper display names are a separate build-owned
+surface derived from bundle product metadata. A platform implementation must therefore prove its
+projection against the operating-system observation API without changing component IDs, executable
+paths, routing, or dependency identity.
 
 ## Verification
 
