@@ -1,6 +1,12 @@
 use sha2::{Digest, Sha256};
 use std::path::Path;
 
+pub const PROCESS_LABEL_ENVIRONMENT: &str = "SOKSAK_PROCESS_LABEL";
+
+pub fn parse_process_label(_value: &str) -> Option<&str> {
+    None
+}
+
 pub fn address(runtime_root: &Path, identifier: &str, windows: bool) -> String {
     if !windows {
         return runtime_root
@@ -47,6 +53,22 @@ mod tests {
         identifier: String,
         windows: bool,
         address: String,
+    }
+
+    #[derive(Deserialize)]
+    struct ProcessLabelVector {
+        input: String,
+        valid: bool,
+    }
+
+    #[test]
+    fn process_label_vectors_are_the_rust_contract() {
+        let vectors: Vec<ProcessLabelVector> =
+            serde_json::from_str(include_str!("../process-label-vectors.json")).unwrap();
+        for vector in vectors {
+            let parsed = parse_process_label(&vector.input);
+            assert_eq!(parsed, vector.valid.then_some(vector.input.as_str()), "{}", vector.input);
+        }
     }
 
     #[test]

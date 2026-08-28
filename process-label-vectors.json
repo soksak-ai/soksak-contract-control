@@ -1,0 +1,12 @@
+[
+  { "input": "soksak", "valid": true },
+  { "input": "soksakv3", "valid": true },
+  { "input": "manual-v3_2.1", "valid": true },
+  { "input": "A", "valid": true },
+  { "input": "", "valid": false },
+  { "input": " leading", "valid": false },
+  { "input": "trailing ", "valid": false },
+  { "input": "slash/name", "valid": false },
+  { "input": "line\nbreak", "valid": false },
+  { "input": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-x", "valid": false }
+]
