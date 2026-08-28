@@ -104,8 +104,8 @@ type Greeting struct {
 	// Identity names the installation, so a client that found the wrong socket receives that at the
 	// greeting rather than through surprising answers.
 	Identity string `json:"identity"`
-	// ProcessLabel is the diagnostic name this process applied to the operating-system process
-	// surface. It never participates in identity, routing, permissions, or dependency resolution.
+	// ProcessLabel is the diagnostic name this process accepted for public inventory and monitoring.
+	// It never participates in identity, routing, permissions, or dependency resolution.
 	ProcessLabel string `json:"processLabel"`
 	// Commands is what is served and refused, with reasons. Sent in the greeting because a client
 	// that must ask separately will act on a name it has not checked.
@@ -131,8 +131,8 @@ type Greeting struct {
 type Announcement struct {
 	Protocol *int    `json:"protocol"`
 	Socket   *string `json:"socket"`
-	// ProcessLabel is required so a starter can prove that the process it launched applied the
-	// requested diagnostic label rather than merely inheriting an unused environment value.
+	// ProcessLabel is required so a starter can prove that the process it launched accepted the
+	// requested diagnostic label rather than merely inheriting an unread environment value.
 	ProcessLabel *string `json:"processLabel"`
 	// Token is what the greeting on that socket has to carry, and it travels here because the only
 	// process that reads this line is the one that started the process that printed it.

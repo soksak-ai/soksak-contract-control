@@ -16,9 +16,10 @@ through 64 characters: it starts with an alphanumeric character and the rest may
 An absent launch value resolves once to the canonical label `soksak`.
 
 The label never identifies an installation, resolves a dependency, grants permission, selects a
-socket, or establishes ownership. It exists only so operating-system process tools and public status
-can distinguish two otherwise identical runs. A process must announce the label it actually applied;
-inheriting an unused environment value is not success.
+socket, or establishes ownership. It exists so public process inventory and monitoring UI can
+distinguish two otherwise identical runs. A process must announce the validated label it accepted;
+silently inheriting an unread environment value is not success. Operating-system process names are
+not this field: platforms that derive those names from executable or bundle identity remain unchanged.
 
 ## Verification
 
