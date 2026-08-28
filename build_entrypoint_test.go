@@ -12,10 +12,13 @@ func TestBuildEntrypointProjectsGoAndRustOwners(t *testing.T) {
 		t.Fatal(err)
 	}
 	source := string(makefile)
-	for _, target := range []string{"preflight:", "prepare:", "build:", "verify:"} {
+	for _, target := range []string{"preflight:", "lock:", "prepare:", "build:", "verify:"} {
 		if !strings.Contains(source, target) {
 			t.Errorf("Makefile omits %s", target)
 		}
+	}
+	if !strings.Contains(source, "cargo metadata --format-version 1") {
+		t.Error("Makefile does not own deterministic Cargo.lock updates")
 	}
 	workflow, err := os.ReadFile(".github/workflows/verify.yml")
 	if err != nil {
