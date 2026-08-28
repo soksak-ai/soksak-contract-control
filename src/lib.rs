@@ -4,6 +4,7 @@ use std::path::Path;
 
 pub const PROTOCOL: u32 = 2;
 pub const PROCESS_LABEL_ENVIRONMENT: &str = "SOKSAK_PROCESS_LABEL";
+pub const DEFAULT_PROCESS_LABEL: &str = "soksak";
 
 pub fn parse_process_label(value: &str) -> Option<&str> {
     let bytes = value.as_bytes();

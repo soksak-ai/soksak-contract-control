@@ -5,6 +5,7 @@ import "errors"
 import "regexp"
 
 const ProcessLabelEnvironment = "SOKSAK_PROCESS_LABEL"
+const DefaultProcessLabel = "soksak"
 
 var ErrInvalidProcessLabel = errors.New("invalid process label")
 var processLabelPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$`)
