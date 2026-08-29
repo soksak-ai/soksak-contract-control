@@ -50,3 +50,12 @@ func TestProtocolTwoAnnouncementRequiresAProcessLabel(t *testing.T) {
 		t.Fatalf("announcement process label = %v", announcement.ProcessLabel)
 	}
 }
+
+func TestOwnProcessNameAndDependencyBindingsHaveDistinctEnvironmentKeys(t *testing.T) {
+	if SidecarNameEnvironment == SidecarBindingsEnvironment {
+		t.Fatal("own sidecar identity and dependency bindings share one environment key")
+	}
+	if SidecarNameEnvironment == "" || SidecarBindingsEnvironment == "" {
+		t.Fatal("sidecar identity environment keys must be explicit")
+	}
+}
