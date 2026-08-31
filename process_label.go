@@ -13,6 +13,7 @@ const SidecarNameEnvironment = "SOKSAK_SIDECAR_NAME"
 // SidecarBindingsEnvironment is a JSON object whose keys are installed Sidecar component ids and
 // whose values are their materialized process names for the current environment.
 const SidecarBindingsEnvironment = "SOKSAK_SIDECAR_BINDINGS"
+const PTYDependencyNameEnvironment = "SOKSAK_PTY_SIDECAR_NAME"
 const DefaultProcessLabel = "soksak"
 
 var ErrInvalidProcessLabel = errors.New("invalid process label")
