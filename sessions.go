@@ -91,3 +91,26 @@ type SessionCloseResult struct {
 	// reads differently even though both leave no record.
 	Held bool `json:"held"`
 }
+
+// SessionNoticeEvent is what an owner emits for a session it stood back up, and what the core
+// delivers to whatever is attached to that session.
+//
+// An owner that restarted holds sessions whose state changed while it was gone. A consumer attached
+// to one and told nothing resumes against state the session does not have and reports it as the
+// session's own — a degraded restore read as a full one, silently.
+//
+// The core delivers it and does not act on it. What an attachment does with the news is that
+// component's: the core owns which sessions exist, never what a session's content means.
+const SessionNoticeEvent = "session.restored"
+
+// SessionNotice is what that event holds.
+//
+// The outcome is one of the four a start ends in. A notice stating only that something changed
+// leaves a consumer knowing the state moved and not how, which is the same as not knowing.
+type SessionNotice struct {
+	Session string `json:"session"`
+	Owner   string `json:"owner"`
+	Outcome string `json:"outcome"`
+	// Reason states what stopped a failed restore. Empty for every other outcome.
+	Reason string `json:"reason,omitempty"`
+}
