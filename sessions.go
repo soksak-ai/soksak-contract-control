@@ -61,3 +61,33 @@ type SessionReport struct {
 	Complete bool             `json:"complete"`
 	Sessions []SessionOutcome `json:"sessions"`
 }
+
+// SessionCloseCommand ends one session, and every component that owns sessions answers it.
+//
+// Closing removes the owner's record, and the core does not write an owner's store. So the close is
+// the owner's act and the core orders it — the same split as the report, and one name for the same
+// reason: a caller must not have to know which owner it is addressing before it can ask.
+//
+// It is explicit. Closing a window, a workspace or a pane detaches the sessions inside it and closes
+// none of them, so nothing but this ends a session.
+const SessionCloseCommand = "system.sessionClose"
+
+// SessionCloseRequest names the one session to end.
+//
+// One rather than a list. A close over a list leaves a caller reading a partial failure with no way
+// to say which halves happened, and the caller wanted a definite answer per session.
+type SessionCloseRequest struct {
+	Session string `json:"session"`
+}
+
+// SessionCloseResult is what became of the close.
+type SessionCloseResult struct {
+	Session string `json:"session"`
+	// Closed states that no record for this session remains. A session the owner never held is
+	// closed as far as a caller is concerned: the outcome it wanted is the outcome it has.
+	Closed bool `json:"closed"`
+	// Held states that the owner was holding the session when the close arrived. It separates
+	// ending a running session from finding nothing to end, which a caller reconciling an index
+	// reads differently even though both leave no record.
+	Held bool `json:"held"`
+}
