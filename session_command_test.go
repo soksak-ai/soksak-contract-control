@@ -1,45 +1,23 @@
 package controlwire
 
 import (
-	"encoding/json"
-	"os"
 	"sort"
 	"testing"
 )
 
-// SessionCommand is one command a view calls on the core to maintain the session index.
-//
-// The index is written by the component that has both halves — the owner issued the id and the view
-// knows the coordinate — and read by the core. Neither side can check the other's spelling: the
-// coupling law forbids a repository from reading another's source, so a name that differs by one
-// character produces an empty index and no error.
-//
-// Measured 2026-09-04: a terminal kit called session_attach with viewId. The command is
-// session.attach with view. Both mismatches were silent, because the runner answers a refusal
-// rather than raising one.
-type SessionCommand struct {
-	Command string   `json:"command"`
-	Params  []string `json:"params"`
-	Purpose string   `json:"purpose"`
-}
-
-// SessionCommands is the set both sides read. A caller spells a name from here; a server registers
-// one from here.
-func SessionCommands(t *testing.T) []SessionCommand {
+// The declared commands are read through the package accessor so a consumer reads exactly what this
+// test grades. A second reader here would be a second answer to one question.
+func sessionCommands(t *testing.T) []SessionCommand {
 	t.Helper()
-	body, err := os.ReadFile("session-command-vectors.json")
+	commands, err := SessionCommands()
 	if err != nil {
 		t.Fatalf("reading the session command vectors: %v", err)
-	}
-	var commands []SessionCommand
-	if err := json.Unmarshal(body, &commands); err != nil {
-		t.Fatalf("parsing the session command vectors: %v", err)
 	}
 	return commands
 }
 
 func TestTheSessionCommandVectorsAreWellFormed(t *testing.T) {
-	commands := SessionCommands(t)
+	commands := sessionCommands(t)
 	if len(commands) == 0 {
 		t.Fatal("the vectors name no command")
 	}
