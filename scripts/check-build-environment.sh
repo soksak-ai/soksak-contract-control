@@ -3,6 +3,14 @@ set -eu
 
 [ "$#" -eq 0 ] || { echo 'BUILD_DECLARATION_INVALID: usage: check-build-environment.sh' >&2; exit 78; }
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+node_expected=$(awk 'NF { value=$0; count++ } END { if (count == 1) print value; else exit 1 }' "$root/.node-version" 2>/dev/null || true)
+node_declared=$(node -e 'const v=require(process.argv[1]);process.stdout.write(v.engines?.node??"")' "$root/package.json" 2>/dev/null || true)
+package_manager=$(node -e 'const v=require(process.argv[1]);process.stdout.write(v.packageManager??"")' "$root/package.json" 2>/dev/null || true)
+case "$package_manager" in pnpm@*) pnpm_expected=${package_manager#pnpm@} ;; *) pnpm_expected= ;; esac
+[ -n "$node_expected" ] && [ "$node_expected" = "$node_declared" ] && [ -n "$pnpm_expected" ] || { echo 'BUILD_DECLARATION_INVALID: Node and pnpm owners are not exact and aligned' >&2; exit 78; }
+node_actual=$(node --version 2>/dev/null || true)
+pnpm_actual=$(cd "$root" && pnpm --version 2>/dev/null || true)
+[ "$node_actual" = "v$node_expected" ] && [ "$pnpm_actual" = "$pnpm_expected" ] || { echo "TOOLCHAIN_MISMATCH: node required=v$node_expected actual=$node_actual, pnpm required=$pnpm_expected actual=$pnpm_actual" >&2; exit 78; }
 go_expected=$(awk '$1 == "go" { value="go" $2; count++ } END { if (count == 1) print value; else exit 1 }' "$root/go.mod" 2>/dev/null || true)
 go_actual=$(go env GOVERSION 2>/dev/null || true)
 go_host_os=$(go env GOHOSTOS 2>/dev/null || true)

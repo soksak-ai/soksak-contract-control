@@ -1,22 +1,36 @@
 [
   {
     "command": "session.attach",
-    "params": ["session", "owner", "view"],
+    "params": [
+      "session",
+      "owner",
+      "view"
+    ],
     "purpose": "record that one view holds one session"
   },
   {
     "command": "session.detach",
-    "params": ["session"],
+    "params": [
+      "session"
+    ],
     "purpose": "remove the coordinate from a session that is still running"
   },
   {
     "command": "session.close",
-    "params": ["session", "view"],
+    "params": [
+      "session",
+      "view"
+    ],
     "purpose": "end one session, or every session on one view"
   },
   {
     "command": "session.list",
     "params": [],
     "purpose": "read every session in the index with the state it is in"
+  },
+  {
+    "command": "session.notices",
+    "params": [],
+    "purpose": "read the outcome each attached session's owner reported for its last start"
   }
 ]
